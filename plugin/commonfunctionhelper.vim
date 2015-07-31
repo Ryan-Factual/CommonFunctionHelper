@@ -10,8 +10,7 @@ let s:python_folder_path = s:script_folder_path . '/../python/'
 let g:list_folder_path = s:script_folder_path . '/../list/functions'
 
 set dictionary+=~/.vim/functions
-set complete+=k
-
+set complete-=k complete+=k
 function! Search(...)
   if a:0 == 0
     call SearchCurrentFunction()
@@ -62,5 +61,39 @@ function! IsScarecrowRulesPath(path)
   return a:path =~ "/scarecrow-rules/"
 endfunction
 
+function! MyCompleteFunction( findstart, base )
+  if a:findstart
+    let line = getline('.')
+    let start = col('.') - 1
+    while start > 0 && line[start - 1] =~ '[A-Za-z_]'
+        let start -= 1
+    endwhile
+    return start
+  else
+    silent call DictGrep( a:base, '~/.vim/functions' )
+    let matches = []
+    for thismatch in getqflist()
+        call add(matches, thismatch.text)
+    endfor
+    return map(matches, 's:makeSnipmateItem(v:val)')
+  endif
+endfunction
+
+function! DictGrep( leader, file )
+    try
+        exe "vimgrep /^" . a:leader . ".*/j " . a:file
+    catch /.*/
+        echo "no matches"
+    endtry
+endfunction
+
+function! s:makeSnipmateItem(value)
+  let pair = split(a:value, "\t")
+  return {
+        \ 'word': pair[0],
+        \ 'menu': pair[1],
+        \ }
+endfunction
+setlocal completefunc=MyCompleteFunction
 command! -nargs=* Search :call Search(<f-args>)
 command! -nargs=? Test :call Test(<f-args>)
