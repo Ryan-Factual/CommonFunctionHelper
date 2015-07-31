@@ -9,8 +9,6 @@ let s:script_folder_path = escape( expand( '<sfile>:p:h' ), '\' )
 let s:python_folder_path = s:script_folder_path . '/../python/'
 let g:list_folder_path = s:script_folder_path . '/../list/functions'
 
-set dictionary+=~/.vim/functions
-set complete-=k complete+=k
 function! Search(...)
   if a:0 == 0
     call SearchCurrentFunction()
@@ -70,7 +68,7 @@ function! MyCompleteFunction( findstart, base )
     endwhile
     return start
   else
-    silent call DictGrep( a:base, '~/.vim/functions' )
+    silent call DictGrep( a:base, g:list_folder_path )
     let matches = []
     for thismatch in getqflist()
         call add(matches, thismatch.text)
