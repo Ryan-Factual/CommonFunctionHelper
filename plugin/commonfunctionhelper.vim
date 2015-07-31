@@ -92,6 +92,6 @@ function! s:makeSnipmateItem(value)
         \ 'menu': pair[1],
         \ }
 endfunction
-setlocal completefunc=MyCompleteFunction
+set completefunc=MyCompleteFunction
 command! -nargs=* Search :call Search(<f-args>)
 command! -nargs=? Test :call Test(<f-args>)
